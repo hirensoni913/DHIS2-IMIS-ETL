@@ -9,8 +9,13 @@ api = Api.from_auth_file('auth.json')
 setup_logger('integration.log')
 
 
-def import_data(payload, dry_run=True, batch_size=10000):
+def import_data(payload, dry_run=True, batch_size=25000):
     # async data import
+
+    if not dry_run:
+        logger.warning("Pushing data...")
+        time.sleep(3)
+
     total_values = len(payload["dataValues"])
 
     if(batch_size == 0):
@@ -26,7 +31,9 @@ def import_data(payload, dry_run=True, batch_size=10000):
                     'dryRun': str(dry_run).lower(),
                     'skipExistingCheck': 'false',
                     'orgUnitIdScheme': 'code',
-                    'importStrategy': 'CREATE_AND_UPDATE'}
+                    'importStrategy': 'CREATE_AND_UPDATE',
+                    # 'dataElementIdScheme': 'code',
+                    'categoryOptionComboIdScheme': 'code'}
         ).json()['response']['id']
         logger.info(
             f"{index} / {total_pages} Data import job started: {job_uid} - waiting...")
@@ -57,9 +64,9 @@ def load_csv(path):
 
 def main():
     # data = load_json(os.path.join('dummydata', 'newFamilies.json'))
-    raw_data = load_csv(os.path.join('dummydata', 'newFamilies.csv'))
+    raw_data = load_csv(os.path.join('dummydata', 'premium_collected.csv'))
     data = {"dataValues": raw_data}
-    import_data(data, dry_run=False)
+    import_data(data, dry_run=False, batch_size=25000)
     # pretty_json(data["dataValues"][0])
 
 
