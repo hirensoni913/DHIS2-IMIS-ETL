@@ -1,95 +1,20 @@
+import json
 import os
 import time
 from dhis2 import Api,  pretty_json, setup_logger, logger, load_json
 from dhis2.utils import partition_payload
 import csv
+from dotenv import load_dotenv
 
-api = Api.from_auth_file('auth.json')
+load_dotenv()
+
+api = Api(server=os.getenv("DHIS2BASEURL"), username=os.getenv("DHIS2USERNAME"),
+          password=os.getenv("DHIS2PASSWORD"))
 
 
 def delete_dataelements_list():
     uids = ['IiTYUcWbGzO',
             'iOMBWxL1eOn',
-            'fd9pcI9iO2b',
-            'Z11DltIhoxT',
-            'PASxZHJlfoX',
-            'htq2mqQHeCE',
-            'tcYVmT6R8oc',
-            'ulXUBq3lyg3',
-            'eUQokLQoYs5',
-            'iWUuIMvxQaM',
-            'RfUb03QylIm',
-            'CQ0AnoK6haf',
-            'ZP9Y9WnDaJb',
-            'WCd2dEqeqHO',
-            'VLtWSc9cItz',
-            'b2sT2VAScON',
-            'NJ5TZyjZGXF',
-            'uTRTDIVzbCg',
-            'AfC7VwOizsV',
-            'p01iC42sfor',
-            'EwH3Qej6QE5',
-            'z2GUiZPUV3i',
-            'pZZUnlEUSSv',
-            'R4s3kd9TJY4',
-            'tOjDp0BY2GL',
-            'DdLJn1iYr4b',
-            'MR7Gm7Wr5oF',
-            'u1NlZ9EBSFZ',
-            'qvl2CFJdWwj',
-            'S7amBqWRpSk',
-            'xXM87oJKZ4J',
-            'XRDaE7DdlIx',
-            'bM279BKv5zk',
-            'lRsy1HrwqkM',
-            'XstUr4NGt7h',
-            'WM6eXJphd7v',
-            'MPFQxM08SIX',
-            'Jcor565d4sb',
-            'Tksyi43Fm1b',
-            'ImsvNDLxfDP',
-            's0Kr7aQS4tL',
-            'Gau4Nh8npZh',
-            'lIPZoqtn69J',
-            'HMPMFMk6jDA',
-            'QzN4dOoxCCL',
-            'Zxgo264dc6a',
-            'vT4pqOPUzMk',
-            'StFHivB1Tjf',
-            'CxB194b92mR',
-            'PAwHP9D2YjN',
-            'hwa5fjx1SQb',
-            'g5sw70I0cL5',
-            'DFkLwV0xglT',
-            'vCtrR1HLObh',
-            'ZYkUM6DR0eb',
-            'iTpIUEYJAPt',
-            'uiVTv6HXH4w',
-            'BwJA6OjWsql',
-            'vO7Yv9kTmTV',
-            'uXjfIKswdYr',
-            'x0UaWkbzBzF',
-            'wtAYRUU4Wl3',
-            't7eGrPom7JR',
-            'A66HNbZgmhK',
-            'LRip63EVJTM',
-            'gkLeeSyrwZZ',
-            'FeXecQWOC3M',
-            'xa3bYgMEKvk',
-            'uVRgb5SiYJN',
-            'A4IJHbjzLDV',
-            'q4aj0W5e9ye',
-            'XTRCJGowTRK',
-            'mOLaFfeEJOa',
-            'Fk5edVOCKQZ',
-            'ByElkwqBW8m',
-            'JUUge3gLtLz',
-            'xMsZpMco97c',
-            'hXgC2k9LW77',
-            'QuV6M4ve7lD',
-            'fornwsLM39x',
-            'wu1TXuF227z',
-            'niBThnifqOo',
             'D3QO0idBBWA',
             'Nqs5TA2YwbM',
             'pMe4Z8R9I7y']
@@ -99,4 +24,19 @@ def delete_dataelements_list():
         print(resp.text)
 
 
-delete_dataelements_list()
+def update_org_unit():
+    data = api.get_paged('organisationUnits', params={
+                         'fields': ':owner'}, page_size=1000, merge=True)["organisationUnits"]
+    payload = {"organisationUnits": []}
+    for ou in data:
+        if " - " in ou["name"]:
+            code, name = ou["name"].split(" - ", 1)
+            ou["name"] = f'{name} ({code})'
+
+        payload["organisationUnits"].append(ou)
+
+    with open("orgUnits.json", "w") as f:
+        json.dump(payload, f, indent=2)
+
+
+update_org_unit()

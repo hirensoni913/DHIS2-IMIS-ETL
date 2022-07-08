@@ -2,9 +2,19 @@
 
 Requirements: Python 3
 
-- Copy file `auth.json.example` to `auth.json`
-- Update credentials in `auth.json`
-- Install dependencies:
+Create .env file
+
+```
+SERVER=
+DATABASE=
+DBUSERNAME=
+DBPASSWORD=
+DHIS2USERNAME=
+DHIS2PASSWORD=
+DHIS2BASEURL=
+```
+
+Install dependencies:
 
 ```
 python3 -m virtualenv .venv
@@ -15,8 +25,7 @@ pip install -r requirements.txt
 ## Run
 
 ```
-# if you have not done so already above:
-source .venv/bin/activate
+# Activate the virtual environment if it's not activated yet:
 
-python run.py
+python run.py --help
 ```
