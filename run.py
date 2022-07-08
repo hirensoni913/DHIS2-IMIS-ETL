@@ -1,6 +1,11 @@
+import argparse
+from ast import Store
+import datetime
 from math import ceil
 import os
+import sys
 import time
+from xmlrpc.client import boolean
 from dhis2 import Api,  pretty_json, setup_logger, logger, load_json
 from dhis2.utils import partition_payload
 import csv
@@ -33,6 +38,7 @@ def import_data(payload: list, parameters: dict, dry_run=True, batch_size=25000)
                       'dryRun': str(dry_run).lower()
                       }
     params = def_parameters | parameters
+
     for index, data in enumerate(partition_payload(payload, 'dataValues', batch_size), 1):
         job_uid = api.post(
             'dataValueSets', data=data,
@@ -64,25 +70,45 @@ def load_csv(path):
         return list(reader)
 
 
-def process_families(date_from, date_to):
+def process_families(date_from, date_to, dry_run):
     integration = Integration(newfamilies.query.format(
-        date_from=date_from, date_to=date_to), newfamilies.parameters)
+        date_from=date_from, date_to=date_to), newfamilies.parameters, "New Families")
 
     payload = execute_query(integration.query)
-    import_data(payload, integration.parameters, True)
+    import_data(payload, integration.parameters, dry_run)
 
 
-def process_premium_collection(date_from, date_to):
+def process_premium_collection(date_from, date_to, dry_run):
     integration = Integration(premiumcollection.query.format(
-        date_from=date_from, date_to=date_to), premiumcollection.parameters)
+        date_from=date_from, date_to=date_to), premiumcollection.parameters, "Premium Collection")
     payload = execute_query(integration.query)
-    import_data(payload, integration.parameters, True)
+    import_data(payload, integration.parameters, dry_run)
 
 
-def main():
-    process_families('2020-01-01', '2020-12-31')
-    process_premium_collection('2020-01-01', '2020-12-31')
+def parse_args(args=sys.argv[1:]):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--date_from",
+                        help="The From Date - format YYYY-MM-DD",
+                        required=True,
+                        type=datetime.date.fromisoformat)
+    parser.add_argument("-t", "--date_to",
+                        help="The To Date - format YYYY-MM-DD",
+                        required=True,
+                        type=datetime.date.fromisoformat)
+    parser.add_argument("-d", "--dry_run",
+                        help="Specify if this is a dry run",
+                        action="store_true",
+                        )
+
+    return parser.parse_args()
+
+
+def main(args):
+    process_families(args.date_from, args.date_to, args.dry_run)
+    process_premium_collection(args.date_from, args.date_to, args.dry_run)
 
 
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+
+    main(args)
