@@ -25,20 +25,13 @@ SELECT COUNT(I.InsureeID) [value], N'TOhUzIBdodh' dataElement, FORMAT(PL.EnrollD
 
 FROM tblPolicy PL INNER JOIN tblInsuree I ON PL.FamilyID = I.FamilyID
 INNER JOIN tblFamilies F ON PL.FamilyID = F.FamilyID
-INNER JOIN tblVillages V ON V.VillageId = F.LocationId
-INNER JOIN tblWards W ON W.WardID = V.WardID
-INNER JOIN tblDistricts D ON D.DistrictID = W.DistrictID
 INNER JOIN tblInsureePolicy InsPL ON InsPL.InsureeId = I.InsureeId AND InsPL.PolicyId = PL.PolicyID
-INNER JOIN tblRegions R ON R.RegionId = D.Region
-INNER JOIN tblLocations L ON L.LocationId = V.VillageId
+INNER JOIN tblLocations L ON L.LocationId = F.LocationId
 INNER JOIN @CategoryOptionCombo doc ON I.Gender = doc.Gender AND DATEDIFF(DAY, I.DOB, PL.EnrollDate)/365 BETWEEN doc.MinAge AND doc.MaxAge
 
 WHERE PL.ValidityTo IS NULL 
 AND I.ValidityTo IS NULL 
 AND F.ValidityTo IS NULL
-AND D.ValidityTo IS NULL
-AND V.ValidityTo IS NULL
-AND W.ValidityTo IS NULL
 AND InsPL.ValidityTo IS NULL
 AND L.ValidityTo IS NULL
 AND PL.EnrollDate BETWEEN N'{date_from}' AND N'{date_to}'
