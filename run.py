@@ -71,10 +71,10 @@ def parse_args(args=sys.argv[1:]):
 
 def main(args):
     logger.info(app_name)
-    # process_families(args.date_from, args.date_to, args.dry_run)
-    # process_insurees(args.date_from, args.date_to, args.dry_run)
+    process_families(args.date_from, args.date_to, args.dry_run)
+    process_insurees(args.date_from, args.date_to, args.dry_run)
     process_new_policies(args.date_from, args.date_to, args.dry_run)
-    # process_premium_collection(args.date_from, args.date_to, args.dry_run)
+    process_premium_collection(args.date_from, args.date_to, args.dry_run)
 
 
 if __name__ == '__main__':
