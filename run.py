@@ -9,7 +9,8 @@ from integrations import (
     newfamilies,
     newinsurees,
     newpolicies,
-    premiumcollection
+    premiumcollection,
+    renewals
 )
 from engine.db import execute_query
 from version import app_name
@@ -46,6 +47,13 @@ def process_premium_collection(date_from, date_to, dry_run):
     import_data(payload, integration.parameters, dry_run)
 
 
+def process_renewals(date_from, date_to, dry_run):
+    integration = Integration(renewals.query.format(
+        date_from=date_from, date_to=date_to), renewals.parameters, "Renewals")
+    payload = execute_query(integration.query)
+    import_data(payload, integration.parameters, dry_run)
+
+
 def parse_args(args=sys.argv[1:]):
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--date_from",
@@ -71,10 +79,11 @@ def parse_args(args=sys.argv[1:]):
 
 def main(args):
     logger.info(app_name)
-    process_families(args.date_from, args.date_to, args.dry_run)
-    process_insurees(args.date_from, args.date_to, args.dry_run)
-    process_new_policies(args.date_from, args.date_to, args.dry_run)
-    process_premium_collection(args.date_from, args.date_to, args.dry_run)
+    # process_families(args.date_from, args.date_to, args.dry_run)
+    # process_insurees(args.date_from, args.date_to, args.dry_run)
+    # process_new_policies(args.date_from, args.date_to, args.dry_run)
+    # process_premium_collection(args.date_from, args.date_to, args.dry_run)
+    process_renewals(args.date_from, args.date_to, args.dry_run)
 
 
 if __name__ == '__main__':
