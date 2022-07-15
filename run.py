@@ -8,6 +8,7 @@ from engine.model import Integration
 from integrations import (
     newfamilies,
     newinsurees,
+    newpolicies,
     premiumcollection
 )
 from engine.db import execute_query
@@ -27,6 +28,13 @@ def process_families(date_from, date_to, dry_run):
 def process_insurees(date_from, date_to, dry_run):
     integration = Integration(newinsurees.query.format(
         date_from=date_from, date_to=date_to), newinsurees.parameters, "New Insurees")
+    payload = execute_query(integration.query)
+    import_data(payload, integration.parameters, dry_run)
+
+
+def process_new_policies(date_from, date_to, dry_run):
+    integration = Integration(newpolicies.query.format(
+        date_from=date_from, date_to=date_to), newpolicies.parameters, dry_run)
     payload = execute_query(integration.query)
     import_data(payload, integration.parameters, dry_run)
 
@@ -63,9 +71,10 @@ def parse_args(args=sys.argv[1:]):
 
 def main(args):
     logger.info(app_name)
-    process_families(args.date_from, args.date_to, args.dry_run)
-    process_insurees(args.date_from, args.date_to, args.dry_run)
-    process_premium_collection(args.date_from, args.date_to, args.dry_run)
+    # process_families(args.date_from, args.date_to, args.dry_run)
+    # process_insurees(args.date_from, args.date_to, args.dry_run)
+    process_new_policies(args.date_from, args.date_to, args.dry_run)
+    # process_premium_collection(args.date_from, args.date_to, args.dry_run)
 
 
 if __name__ == '__main__':
