@@ -11,7 +11,8 @@ from integrations import (
     newpolicies,
     premiumcollection,
     renewals,
-    numberofclaims
+    numberofclaims,
+    claimsvaluated
 )
 from engine.db import execute_query
 from version import app_name
@@ -62,6 +63,13 @@ def process_numberofclaims(date_from, date_to, dry_run):
     import_data(payload, integration.parameters, dry_run)
 
 
+def process_claimsvaluated(date_from, date_to, dry_run):
+    integration = Integration(claimsvaluated.query.format(
+        date_from=date_from, date_to=date_to), claimsvaluated.parameters, "Claims Valuated")
+    payload = execute_query(integration.query)
+    import_data(payload, integration.parameters, dry_run)
+
+
 def parse_args(args=sys.argv[1:]):
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--date_from",
@@ -93,6 +101,7 @@ def main(args):
     process_premium_collection(args.date_from, args.date_to, args.dry_run)
     process_renewals(args.date_from, args.date_to, args.dry_run)
     process_numberofclaims(args.date_from, args.date_to, args.dry_run)
+    process_claimsvaluated(args.date_from, args.date_to, args.dry_run)
 
 
 if __name__ == '__main__':
