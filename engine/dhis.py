@@ -1,3 +1,4 @@
+import logging
 import time
 from math import ceil
 import os
@@ -5,6 +6,8 @@ import os
 from dhis2 import Api,  logger
 from dhis2.utils import partition_payload
 from dotenv import load_dotenv
+from requests import RequestException
+from tenacity import before_sleep_log, retry, retry_if_not_exception_type, stop_after_delay, wait_exponential
 
 from version import app_name
 
@@ -14,6 +17,12 @@ api = Api(server=os.getenv("DHIS2BASEURL"), username=os.getenv("DHIS2USERNAME"),
           password=os.getenv("DHIS2PASSWORD"), user_agent=app_name)
 
 
+@retry(
+    retry=retry_if_not_exception_type(RequestException),
+    wait=wait_exponential(multiplier=1, max=120),
+    stop=stop_after_delay(360),
+    before_sleep=before_sleep_log(logger, logging.WARNING)
+)
 def import_data(payload: list, parameters: dict, dry_run=True, batch_size=25000):
     # async data import
     payload = {"dataValues": payload}

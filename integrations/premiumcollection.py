@@ -10,6 +10,7 @@ INNER JOIN tblLocations L ON F.LocationId = L.LocationID
 WHERE PR.ValidityTo IS NULL 
 AND PL.ValidityTo IS NULL 
 AND F.ValidityTo IS NULL
+AND L.ValidityTo IS NULL
 AND PR.PayDate BETWEEN N'{date_from}' AND N'{date_to}'  
 
 GROUP BY PR.PayDate, L.LocationUUID, PR.PayType, ProductCode
