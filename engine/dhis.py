@@ -29,6 +29,7 @@ def import_data(payload: list, parameters: dict, dry_run=True, batch_size=25000)
     total_pages = ceil(total_values/batch_size)
     def_parameters = {'skipAudit': 'true',
                       'async': 'true',
+                      'importStrategy': 'CREATE',
                       'dryRun': str(dry_run).lower()
                       }
     params = def_parameters | parameters
