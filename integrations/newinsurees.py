@@ -34,6 +34,7 @@ AND I.ValidityTo IS NULL
 AND F.ValidityTo IS NULL
 AND InsPL.ValidityTo IS NULL
 AND L.ValidityTo IS NULL
+AND L.LocationName <> N'Funding'
 AND PL.EnrollDate BETWEEN N'{date_from}' AND N'{date_to}'
 
 GROUP BY FORMAT(PL.EnrollDate, 'yyyyMMdd'), L.LocationUUID, doc.DHISUID 

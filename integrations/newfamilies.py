@@ -32,6 +32,7 @@ AND I.ValidityTo IS NULL
 AND F.ValidityTo IS NULL
 AND InsPL.ValidityTo IS NULL
 AND L.ValidityTo IS NULL
+AND L.LocationName <> N'Funding'
 AND I.IsHead = 1
 AND PL.EnrollDate BETWEEN N'{date_from}' AND N'{date_to}'
 

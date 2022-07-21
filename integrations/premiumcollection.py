@@ -11,6 +11,8 @@ WHERE PR.ValidityTo IS NULL
 AND PL.ValidityTo IS NULL 
 AND F.ValidityTo IS NULL
 AND L.ValidityTo IS NULL
+AND PR.PayType <> N'F'
+AND L.LocationName <> N'Funding'
 AND PR.PayDate BETWEEN N'{date_from}' AND N'{date_to}'  
 
 GROUP BY PR.PayDate, L.LocationUUID, PR.PayType, ProductCode

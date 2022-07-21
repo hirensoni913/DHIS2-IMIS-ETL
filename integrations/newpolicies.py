@@ -17,6 +17,7 @@ AND Prod.ValidityTo IS NULL
 AND L.ValidityTo IS NULL
 AND PL.PolicyStage = N'N'
 AND I.Gender IN ('M','F')
+AND L.LocationName <> N'Funding'
 AND PL.EnrollDate BETWEEN N'{date_from}' AND N'{date_to}'
 
 GROUP BY FORMAT(PL.EnrollDate, 'yyyyMMdd'), Prod.ProductCode, L.LocationUUID, I.Gender
