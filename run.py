@@ -22,7 +22,7 @@ setup_logger('integration.log')
 
 
 def process_families(date_from, date_to, dry_run):
-    logger.info("")
+    print("")
     logger.info("Importing Families")
     integration = Integration(newfamilies.query.format(
         date_from=date_from, date_to=date_to), newfamilies.parameters, "New Families")
@@ -32,7 +32,7 @@ def process_families(date_from, date_to, dry_run):
 
 
 def process_insurees(date_from, date_to, dry_run):
-    logger.info("")
+    print("")
     logger.info("Importing Insurees")
     integration = Integration(newinsurees.query.format(
         date_from=date_from, date_to=date_to), newinsurees.parameters, "New Insurees")
@@ -41,7 +41,7 @@ def process_insurees(date_from, date_to, dry_run):
 
 
 def process_new_policies(date_from, date_to, dry_run):
-    logger.info("")
+    print("")
     logger.info("Importing Policies")
     integration = Integration(newpolicies.query.format(
         date_from=date_from, date_to=date_to), newpolicies.parameters, dry_run)
@@ -50,7 +50,7 @@ def process_new_policies(date_from, date_to, dry_run):
 
 
 def process_premium_collection(date_from, date_to, dry_run):
-    logger.info("")
+    print("")
     logger.info("Importing Premium")
     integration = Integration(premiumcollection.query.format(
         date_from=date_from, date_to=date_to), premiumcollection.parameters, "Premium Collection")
@@ -59,7 +59,7 @@ def process_premium_collection(date_from, date_to, dry_run):
 
 
 def process_renewals(date_from, date_to, dry_run):
-    logger.info("")
+    print("")
     logger.info("Importing Renewals")
     integration = Integration(renewals.query.format(
         date_from=date_from, date_to=date_to), renewals.parameters, "Renewals")
@@ -68,7 +68,7 @@ def process_renewals(date_from, date_to, dry_run):
 
 
 def process_numberofclaims(date_from, date_to, dry_run):
-    logger.info("")
+    print("")
     logger.info("Importing Claims")
     integration = Integration(numberofclaims.query.format(
         date_from=date_from, date_to=date_to), numberofclaims.parameters, "Number of Claims")
@@ -77,7 +77,7 @@ def process_numberofclaims(date_from, date_to, dry_run):
 
 
 def process_claimsvaluated(date_from, date_to, dry_run):
-    logger.info("")
+    print("")
     logger.info("Importing Valuated Claims")
     integration = Integration(claimsvaluated.query.format(
         date_from=date_from, date_to=date_to), claimsvaluated.parameters, "Claims Valuated")
