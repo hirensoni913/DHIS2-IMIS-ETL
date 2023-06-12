@@ -32,7 +32,7 @@ def import_data(payload: list, parameters: dict, dry_run=True, batch_size=25000)
 
     total_values = len(payload["dataValues"])
 
-    if(batch_size == 0):
+    if (batch_size == 0):
         batch_size = total_values
 
     total_pages = ceil(total_values/batch_size)
@@ -59,6 +59,10 @@ def import_data(payload: list, parameters: dict, dry_run=True, batch_size=25000)
                     f'system/taskSummaries/DATAVALUE_IMPORT/{job_uid}').json()
                 logger.info(
                     f"{summary.get('description')} - {summary.get('importCount')}")
+
+                logger.info(
+                    f'Import details: {os.getenv("DHIS2BASEURL")}/api/system/taskSummaries/DATAVALUE_IMPORT/{job_uid}'
+                )
                 break
 
             error = [item for item in ping.json() if item['level'] == 'ERROR']

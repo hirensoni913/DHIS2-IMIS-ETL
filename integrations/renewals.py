@@ -12,6 +12,7 @@ AND F.ValidityTo IS NULL
 AND I.ValidityTo IS NULL
 AND Prod.ValidityTo IS NULL
 AND PL.PolicyStage = N'R'
+AND L.ValidityTo IS NULL
 AND PL.EnrollDate BETWEEN N'{date_from}' AND N'{date_to}'
 AND I.Gender IN ('M','F')
 
