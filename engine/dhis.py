@@ -23,6 +23,21 @@ api = Api(server=os.getenv("DHIS2BASEURL"), username=os.getenv("DHIS2USERNAME"),
     stop=stop_after_delay(360),
     before_sleep=before_sleep_log(logger, logging.WARNING)
 )
+def fetch_metadata(name, fields="id,code"):
+    logger.info(f'Fetching {name}')
+    url = f'{name}?paging=false&fields={fields},'
+    ping = api.get(url)
+    ping.raise_for_status()
+
+    return ping.json()
+
+
+@retry(
+    retry=retry_if_not_exception_type(RequestException),
+    wait=wait_exponential(multiplier=1, max=120),
+    stop=stop_after_delay(360),
+    before_sleep=before_sleep_log(logger, logging.WARNING)
+)
 def import_data(payload: list, parameters: dict, dry_run=True, batch_size=25000):
     # async data import
     payload = {"dataValues": payload}

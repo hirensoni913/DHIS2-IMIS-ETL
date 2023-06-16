@@ -4,7 +4,7 @@ import sys
 
 from dhis2 import setup_logger, logger
 from pyodbc import lowercase
-from engine.dhis import import_data
+from engine.dhis import import_data, fetch_metadata
 from engine.model import Integration
 from integrations import (
     newfamilies,
@@ -13,7 +13,9 @@ from integrations import (
     premiumcollection,
     renewals,
     numberofclaims,
-    claimsvaluated
+    claimsvaluated,
+    healthfacilities,
+    metadata
 )
 from engine.db import execute_query
 from version import app_name
@@ -85,6 +87,20 @@ def process_claimsvaluated(date_from, date_to, dry_run):
     import_data(payload, integration.parameters, dry_run)
 
 
+def process_healthfacilities(dry_run):
+    print("")
+    logger.info("Importing Health Facilities")
+    existing_ous = fetch_metadata("organisationUnits")
+    existing_ous = list(existing_ous.items())
+    integration = Integration(healthfacilities.query,
+                              None, "Health Facilities")
+    hfs = execute_query(integration.query)
+
+    print(hfs)
+    metadata.prepare_hf_payload(
+        hfs, existing_ous, metadata.Strategy.INSERT)
+
+
 def parse_args(args=sys.argv[1:]):
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--date_from",
@@ -131,6 +147,8 @@ def main(args):
         process_numberofclaims(args.date_from, args.date_to, args.dry_run)
     if "valuatedclaims" in (entity.lower() for entity in entities) or "*" in entities:
         process_claimsvaluated(args.date_from, args.date_to, args.dry_run)
+    if "healthfacilities" in (entity.lower() for entity in entities) or "*" in entities:
+        process_healthfacilities(args.dry_run)
 
 
 if __name__ == '__main__':
